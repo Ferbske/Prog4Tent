@@ -32,22 +32,21 @@ router.post('/studentenhuis', (req,res) => {
 });
 
 router.get('/studentenhuis/:huisId?/maaltijd/:maaltijdId?', (req, res) => {
-
     let huisId = req.params.huisId;
     let maaltijdId = req.params.maaltijdId;
     let result;
     if (maaltijdId === undefined) {
-        result = maaltijd.filter((result) => {
-            if (result.studentenhuisid === huisId) {
-                return result;
-            }
-        })
+        db.query("SELECT * FROM maaltijd WHERE StudentenhuisId = " + huisId, (err,result) => {
+            if(err)throw err;
+            console.log(result);
+            res.json(result);
+        });
     } else {
-        result = maaltijd.filter((result) => {
-            if (result.studentenhuisid === huisId && result.id === maaltijdId) {
-                return result;
-            }
-        })
+        db.query("SELECT * FROM maaltijd WHERE StudentenhuisId = " + huisId + " AND ID = " + maaltijdId, (err,result) => {
+            if(err)throw err;
+            console.log(result);
+            res.json(result);
+        });
     }
 
     // res.send('WERKT GEWOON');
@@ -59,15 +58,6 @@ router.get('/studentenhuis/:huisId?/maaltijd/:maaltijdId?', (req, res) => {
     //         }
     //     })
     // }
-
-    if (result === undefined) {
-        res.status(404);
-        res.send('Niet gevonden (huisId bestaat niet)');
-    } else {
-        res.status(200);
-        res.json(result);
-    }
-
 });
 
 
