@@ -1,30 +1,35 @@
 const express = require('express');
 const router = express.Router();
-const deelnemers = require('../data/deelnemer');
-const maaltijd = require('../data/maaltijd');
-const studentenhuis = require('../data/studentenhuis');
-const user = require('../data/user');
+const db = require('../database/DBConnector');
 
-router.get('/', (req, res) => {
-    res.send('Hello Avans!');
-});
-
-router.get('/studentenhuis/:naam?', (req, res) => {
-    let naam = req.params.naam || '';
+// Studentenhuis
+router.get('/studentenhuis/:huisId?', (req,res) => {
+    let huisId = req.params.huisId || '';
     let result;
-    if (naam === '') {
-        result = studentenhuis;
+    if (huisId === '' ){
+        db.query("SELECT * FROM studentenhuis", (err,result) => {
+            if(err)throw err;
+            console.log(result);
+            res.json(result);
+        });
     } else {
-        result = studentenhuis.filter((user) => {
-            if (user.naam === naam) {
-                return user;
+        db.query("SELECT * FROM studentenhuis WHERE ID = " + huisId, (err,result) => {
+            if(err)throw err;
+            console.log(result);
+            if (result === null){
+                res.status(404);
+                res.send('Niet gevonden (huisId bestaat niet)');
+            } else {
+                res.status(200);
+                res.json(result);
             }
-        })
+        });
     }
-    res.status(200);
-    res.json(result);
 });
 
+router.post('/studentenhuis', (req,res) => {
+    res.send('Het toegevoegde studentenhuis met ' + ID + ' en ' + gebruikersinfo);
+});
 
 router.get('/studentenhuis/:huisId?/maaltijd/:maaltijdId?', (req, res) => {
 
