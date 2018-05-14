@@ -1,48 +1,35 @@
 const express = require('express');
 const router = express.Router();
-const recipes = require('../data/recipes');
+const deelnemers = require('../data/deelnemer');
+const maaltijd = require('../data/maaltijd');
+const studentenhuis = require('../data/studentenhuis');
+const user = require('../data/user');
 
 router.get('/', (req, res) => {
     res.send('Hello Avans!');
 });
 
-router.get('/about', (req, res) => {
-    res.send('Written by <Rick Voesenek>');
-});
-
-router.get('/info', (req,res) => {
-   res.status(200);
-   res.json({
-       "server": "restful",
-       "author": "rick voesenek"
-   })
-});
-
-router.get('/recipes/:number?', (req,res) => {
-    let number = req.params.number || '';
+router.get('/studentenhuis/:naam?', (req,res) => {
+    let naam = req.params.naam || '';
     let result;
-    if( number === '' ){
-        result = recipes;
+    if (naam === '' ){
+        result = studentenhuis;
     } else {
-        number = number - 1;
-        result = recipes[number];
+        result = studentenhuis.filter( (user) => {
+            if (user.naam === naam){
+                return user;
+            }
+        })
     }
     res.status(200);
     res.json(result);
 });
 
-router.post('/', (req, res) => {
-    res.send('Hello Avans, POST request received!');
-});
-
-router.put('/', (req, res) => {
-    res.send('Hello Avans, PUT request received!');
-});
 
 router.all('/version', (req,res) => {
     res.status(500);
     res.json({
-        "description": "Thank you for using API version 2"
+        "description": "Thank you for using API version 1"
     })
 });
 
