@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/DBConnector');
+const deelnemer = require('../database/deelnemer');
+const maaltijd = require('../database/maaltijd');
+const studentenhuis = require('../database/studentenhuis');
+const user = require('../database/user');
 
-// Studentenhuis
+// GET requests
 router.get('/studentenhuis/:huisId?', (req,res) => {
     let huisId = req.params.huisId || '';
     let result;
@@ -27,10 +31,6 @@ router.get('/studentenhuis/:huisId?', (req,res) => {
     }
 });
 
-router.post('/studentenhuis', (req,res) => {
-    res.send('Het toegevoegde studentenhuis met ' + ID + ' en ' + gebruikersinfo);
-});
-
 router.get('/studentenhuis/:huisId?/maaltijd/:maaltijdId?', (req, res) => {
     let huisId = req.params.huisId;
     let maaltijdId = req.params.maaltijdId;
@@ -48,18 +48,56 @@ router.get('/studentenhuis/:huisId?/maaltijd/:maaltijdId?', (req, res) => {
             res.json(result);
         });
     }
+router.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', (req,res) => {
+    res.send('GET studentenhuis/huidId/maaltijd/maaltijdId/deelnemers')
 
-    // res.send('WERKT GEWOON');
-    // }
-    // else if (huisId !== '' && maaltijdId !== '') {
-    //     result = maaltijd.filter( (result) => {
-    //         if (result.studentenhuisid === huisId && result.id === maaltijdId) {
-    //             return result;
-    //         }
-    //     })
-    // }
+});
 });
 
+// POST Requests
+router.post('/login', (req,res) => {
+    res.send('POST login')
+});
+
+router.post('/register', (req,res) => {
+    res.send('POST register')
+});
+
+router.post('/studentenhuis', (req,res) => {
+    res.send('POST studentenhuis')
+});
+
+router.post('/studentenhuis/:huisId', (req,res) => {
+    res.send('POST studentenhuis/huisId')
+});
+
+router.post('/studentenhuis/:huisId/maaltijd/:maaltijdId', (req,res) => {
+    res.send('POST studentenhuis/huisId/maaltijd/maaltijdId')
+});
+
+// PUT Requests
+router.put('/studentenhuis/:huisId', (req,res) => {
+    res.send('PUT studentenhuis/huisId')
+});
+
+router.put('/studentenhuis/:huisId/maaltijd/:maaltijdId', (req,res) => {
+    res.send('PUT studentenhuis/huisId/maaltijd/maaltijdId')
+});
+
+// DELETE Requests
+router.delete('/studentenhuis/:huisId', (req,res) => {
+    res.send('DELETE studentenhuis/huidId')
+});
+
+router.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', (req,res) => {
+    res.send('DELETE studentenhuis/huidId/maaltijd/maaltijdId')
+});
+
+router.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', (req,res) => {
+    res.send('DELETE studentenhuis/huidId/maaltijd/maaltijdId/deelnemers')
+});
+
+// ALL Requests
 
 router.all('/version', (req, res) => {
     res.status(500);
