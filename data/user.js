@@ -21,3 +21,4 @@ var users = [
         password: 'secret'
     }
 ];
+module.exports = users;

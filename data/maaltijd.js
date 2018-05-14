@@ -30,3 +30,4 @@ var maaltijden = [
         studentenhuisid: '3'
     }
 ];
+module.exports = maaltijden;

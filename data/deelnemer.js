@@ -1,4 +1,4 @@
-var deelnemer = [
+var deelnemers = [
     {
         userid: '1',
         studentenhuisid: '1',
@@ -15,3 +15,4 @@ var deelnemer = [
         maaltijdid: '3'
     }
 ];
+module.exports = deelnemers;

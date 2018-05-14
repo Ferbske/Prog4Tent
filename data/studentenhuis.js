@@ -18,3 +18,4 @@ var studentenhuizen = [
         userid: '3'
     }
 ];
+module.exports = studentenhuizen;
