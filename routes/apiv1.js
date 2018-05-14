@@ -1,26 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/DBConnector');
+const bodyParser = require('body-parser');
 const deelnemer = require('../database/deelnemer');
 const maaltijd = require('../database/maaltijd');
 const studentenhuis = require('../database/studentenhuis');
 const user = require('../database/user');
 
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: false }));
+
 // GET requests
-router.get('/studentenhuis/:huisId?', (req,res) => {
+router.get('/studentenhuis/:huisId?', (req, res) => {
     let huisId = req.params.huisId || '';
     let result;
-    if (huisId === '' ){
-        db.query("SELECT * FROM studentenhuis", (err,result) => {
-            if(err)throw err;
+    if (huisId === '') {
+        db.query("SELECT * FROM studentenhuis", (err, result) => {
+            if (err) throw err;
             console.log(result);
             res.json(result);
         });
     } else {
-        db.query("SELECT * FROM studentenhuis WHERE ID = " + huisId, (err,result) => {
-            if(err)throw err;
+        db.query("SELECT * FROM studentenhuis WHERE ID = " + huisId, (err, result) => {
+            if (err) throw err;
             console.log(result);
-            if (result === null){
+            if (result === null) {
                 res.status(404);
                 res.send('Niet gevonden (huisId bestaat niet)');
             } else {
@@ -36,64 +40,71 @@ router.get('/studentenhuis/:huisId?/maaltijd/:maaltijdId?', (req, res) => {
     let maaltijdId = req.params.maaltijdId;
     let result;
     if (maaltijdId === undefined) {
-        db.query("SELECT * FROM maaltijd WHERE StudentenhuisId = " + huisId, (err,result) => {
-            if(err)throw err;
+        db.query("SELECT * FROM maaltijd WHERE StudentenhuisId = " + huisId, (err, result) => {
+            if (err) throw err;
             console.log(result);
             res.json(result);
         });
     } else {
-        db.query("SELECT * FROM maaltijd WHERE StudentenhuisId = " + huisId + " AND ID = " + maaltijdId, (err,result) => {
-            if(err)throw err;
+        db.query("SELECT * FROM maaltijd WHERE StudentenhuisId = " + huisId + " AND ID = " + maaltijdId, (err, result) => {
+            if (err) throw err;
             console.log(result);
             res.json(result);
         });
     }
-router.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', (req,res) => {
-    res.send('GET studentenhuis/huidId/maaltijd/maaltijdId/deelnemers')
+    router.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', (req, res) => {
+        res.send('GET studentenhuis/huidId/maaltijd/maaltijdId/deelnemers')
 
-});
+    });
 });
 
 // POST Requests
-router.post('/login', (req,res) => {
+router.post('/login', (req, res) => {
     res.send('POST login')
 });
 
-router.post('/register', (req,res) => {
+router.post('/register', (req, res) => {
     res.send('POST register')
 });
 
-router.post('/studentenhuis', (req,res) => {
-    res.send('POST studentenhuis')
+router.post('/studentenhuis', (req, res) => {
+    let naam = req.body.naam || '';
+    let adres = req.body.adres || '';
+    // db.query("INSERT INTO studentenhuis (Naam = '" + naam + "', '" + adres, (err, result) => {
+    //     if (err) throw err;
+    //     console.log(result);
+    //     res.send(result);
+    // });
+    res.send(naam + " "+ adres);
 });
 
-router.post('/studentenhuis/:huisId', (req,res) => {
+router.post('/studentenhuis/:huisId', (req, res) => {
     res.send('POST studentenhuis/huisId')
 });
 
-router.post('/studentenhuis/:huisId/maaltijd/:maaltijdId', (req,res) => {
+router.post('/studentenhuis/:huisId/maaltijd/:maaltijdId', (req, res) => {
     res.send('POST studentenhuis/huisId/maaltijd/maaltijdId')
 });
 
 // PUT Requests
-router.put('/studentenhuis/:huisId', (req,res) => {
+router.put('/studentenhuis/:huisId', (req, res) => {
     res.send('PUT studentenhuis/huisId')
 });
 
-router.put('/studentenhuis/:huisId/maaltijd/:maaltijdId', (req,res) => {
+router.put('/studentenhuis/:huisId/maaltijd/:maaltijdId', (req, res) => {
     res.send('PUT studentenhuis/huisId/maaltijd/maaltijdId')
 });
 
 // DELETE Requests
-router.delete('/studentenhuis/:huisId', (req,res) => {
+router.delete('/studentenhuis/:huisId', (req, res) => {
     res.send('DELETE studentenhuis/huidId')
 });
 
-router.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', (req,res) => {
+router.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', (req, res) => {
     res.send('DELETE studentenhuis/huidId/maaltijd/maaltijdId')
 });
 
-router.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', (req,res) => {
+router.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', (req, res) => {
     res.send('DELETE studentenhuis/huidId/maaltijd/maaltijdId/deelnemers')
 });
 

@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Ferbske/Prog4Tent#readme",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "express": "^4.16.3",
     "mysql": "^2.15.0"
   },
