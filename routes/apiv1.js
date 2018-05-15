@@ -14,43 +14,47 @@ const studentenhuis = require('../database/studentenhuis');
 const user = require('../database/user');
 
 // GET requests
-router.get('/studentenhuis/:huisId?', (req, res) => {
-    let huisId = req.params.huisId || '';
-    if (huisId === '') {
+router.get('/studentenhuis/:houseId?', (req, res) => {
+    let houseId = req.params.houseId || '';
+    if (houseId === '') {
         db.query("SELECT * FROM studentenhuis", (err, result) => {
             if (err) throw err;
-            res.json(result);
+            res.json(result)
         });
     } else {
-        db.query("SELECT * FROM studentenhuis WHERE ID = ?", [huisId], (err, result) => {
-            if (result.length > 0) {
-                res.json(result);
-            } else {
-                error.notFound(res);
-            }
-        });
+        const houseId = req.params.houseId || '';
+        if (houseId) {
+            db.query("SELECT * FROM studentenhuis WHERE ID = ?", [houseId], (err, result) => {
+                if (result.length > 0) {
+                    console.log("exists");
+                    res.json(result);
+                } else {
+                    error.notFound(res);
+                }
+            });
+        }
     }
 });
 
-router.get('/studentenhuis/:huisId?/maaltijd/:maaltijdId?', (req, res) => {
-    let huisId = req.params.huisId;
-    let maaltijdId = req.params.maaltijdId;
+router.get('/studentenhuis/:houseId?/maaltijd/:mealId?', (req, res) => {
+    let houseId = req.params.houseId;
+    let mealId = req.params.mealId;
     let result;
-    if (maaltijdId === undefined) {
-        db.query("SELECT * FROM maaltijd WHERE StudentenhuisId = " + huisId, (err, result) => {
+    if (mealId === undefined) {
+        db.query("SELECT * FROM maaltijd WHERE StudentenhuisId = " + houseId, (err, result) => {
             if (err) throw err;
             console.log(result);
             res.json(result);
         });
     } else {
-        db.query("SELECT * FROM maaltijd WHERE StudentenhuisId = " + huisId + " AND ID = " + maaltijdId, (err, result) => {
+        db.query("SELECT * FROM maaltijd WHERE StudentenhuisId = " + houseId + " AND ID = " + mealId, (err, result) => {
             if (err) throw err;
             console.log(result);
             res.json(result);
         });
     }
-    router.get('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', (req, res) => {
-        res.send('GET studentenhuis/huidId/maaltijd/maaltijdId/deelnemers')
+    router.get('/studentenhuis/:houseId/maaltijd/:mealId/deelnemers', (req, res) => {
+        res.send('GET studentenhuis/houseId/maaltijd/mealId/deelnemers')
 
     });
 });
@@ -58,18 +62,18 @@ router.get('/studentenhuis/:huisId?/maaltijd/:maaltijdId?', (req, res) => {
 // POST Requests
 // Login with the following body {"username":"<username>", "password":"<password>"}
 router.post('/login', (req, res) => {
-    let username = req.body.username || '';
+    let email = req.body.email || '';
     let password = req.body.password || '';
 
-    db.query('SELECT email, password FROM user WHERE email = ?', [username], (error, rows, fields) => {
-        if(error) {
+    db.query('SELECT email, password FROM user WHERE email = ?', [email], (error, rows, fields) => {
+        if (error) {
             res.status(500).json(error);
         }
 
         console.log(rows);
 
-        if (username == rows[0].email && password == rows[0].password) {
-            let token = auth.encodeToken(username);
+        if (email == rows[0].email && password == rows[0].password) {
+            let token = auth.encodeToken(email);
             res.status(200).json({
                 "token": token,
                 "status": 200,
@@ -89,64 +93,67 @@ router.post('/register', (req, res) => {
     let password = req.body.password || '';
     if (firstname !== '' && lastname !== '' && email !== '' && password !== '') {
         if (regex.test(email) === true) {
-            db.query("SELECT Email FROM user WHERE Email = ?", [email], function(err, result) {
-                if(result.length > 0){
+            db.query("SELECT Email FROM user WHERE Email = ?", [email], function (err, result) {
+                if (result.length > 0) {
                     error.emailTaken(res);
                 }
-                else{
-                    db.query("INSERT INTO `user` (Voornaam, Achternaam, Email, Password) VALUES (?, ?, ?, ?)" ,[firstname, lastname, email, password], function(err, result) {
+                else {
+                    db.query("INSERT INTO `user` (Voornaam, Achternaam, Email, Password) VALUES (?, ?, ?, ?)", [firstname, lastname, email, password], function (err, result) {
                         console.log(result);
-                        db.query("SELECT Voornaam, Achternaam, Email FROM user WHERE Email = ?",[email], function(err, result) {
+                        db.query("SELECT Voornaam, Achternaam, Email FROM user WHERE Email = ?", [email], function (err, result) {
                             if (err) throw err;
-                            res.json(result)});
+                            res.json(result)
+                        });
                     });
                     let token = auth.encodeToken(email);
                 }
             });
         }
-        else{
+        else {
             error.emailInvalid(res);
         }
     }
-    else{
+    else {
         error.missingProp(res);
     }
 });
 
-//
+// POST studentenhuis
 router.post('/studentenhuis', (req, res) => {
-    let name = req.body.name || '';
-    let address = req.body.address || '';
+    let name = req.body.naam || '';
+    let address = req.body.adres || '';
     let token = req.get('Authorization');
     token = token.substring(7);
     let email = auth.decodeToken(token);
     email = email.sub;
 
-    if (name !== '' && address !== ''){
-        db.query("SELECT ID GROM user WHERE email = ?", [email], (err, rows, fields) => {
+    if (name !== '' && address !== '') {
+        db.query("SELECT ID FROM user WHERE email = ?", [email], (err, rows, fields) => {
             let userId = rows[0].ID;
-            db.query("INSERT INTO `studentenhuis` (Naam, Adres, UserID) VALUES (?,?,?)", [naam, address, userId], (err, rows, field) => {
-                if(err) throw err;
+            db.query("INSERT INTO `studentenhuis` (Naam, Adres, UserID) VALUES (?,?,?)", [name, address, userId], (err, rows, field) => {
+                if (err) throw err;
                 let row = rows.insertId;
-                selectId(row, res);
+                db.query("SELECT * FROM studentenhuis WHERE ID = ?", [row], (err, result) => {
+                    if (result.length > 0) {
+                        res.json(result);
+                    } else {
+                        error.notFound(res)
+                    }
+                });
             });
-        })
+        });
     } else {
         error.missingProp(res);
     }
 });
 
-router.post('/studentenhuis/:huisId', (req, res) => {
-    res.send('POST studentenhuis/huisId')
+router.post('/studentenhuis/:houseId', (req, res) => {
+    let houseId = req.params.houseId || '';
+    let name = req.body.name || '';
+    let address = req.body.address || '';
 });
 
 router.post('/studentenhuis/:huisId/maaltijd', (req, res) => {
-    // Maak een nieuwe maaltijd voor een studentenhuis. De ID van de gebruiker die de maaltijd aanmaakt wordt opgeslagen bij de maaltijd.
-    // Deze ID haal je uit het JWT token. Als er geen studentenhuis met de gevraagde huisId bestaat wordt een juiste foutmelding geretourneerd.
-    // De correctheid van de informatie die wordt gegeven moet door de server gevalideerd worden.
-    // Bij ontbrekende of foutieve invoer wordt een juiste foutmelding geretourneerd. Authenticatie door middel van JWT is vereist.
-
-    // res.send('POST studentenhuis/huisId/maaltijd');
     let name = req.body.naam;
     let description = req.body.beschrijving;
     let ingredients = req.body.ingredienten;
@@ -174,25 +181,99 @@ router.post('/studentenhuis/:huisId/maaltijd', (req, res) => {
 });
 
 // PUT Requests
-router.put('/studentenhuis/:huisId', (req, res) => {
-    res.send('PUT studentenhuis/huisId')
+router.put('/studentenhuis/:houseId', (req, res) => {
+    let houseId = req.params.huisId || '';
+    let name = req.body.naam || '';
+    let address = req.body.adres || '';
+    let token = req.get('Authorization');
+    token = token.substring(7);
+    let email = auth.decodeToken(token);
+    email = email.sub;
+    if (houseId && name !== '' && address !== '') {
+        db.query("SELECT ID FROM user WHERE Email = ?", [email], function (err, rows) {
+            let currentUserId = rows[0].ID;
+
+            db.query("SELECT * FROM studentenhuis WHERE ID = ?", [houseId], (err, result) => {
+                if (result.length > 0) {
+                    console.log("exists");
+                } else {
+                    error.notFound(res);
+                }
+            });
+            db.query("SELECT UserID FROM studentenhuis WHERE ID = ?", [houseId], function (err, rows) {
+                let existingUserId = rows[0].UserID;
+                if (currentUserId == existingUserId) {
+                    db.query("UPDATE studentenhuis SET naam = ?, adres = ? WHERE ID = ?", [name, address, houseId], (err, result) => {
+                        db.query("SELECT * FROM studentenhuis WHERE ID = ?", [houseId], (err, result) => {
+                            if (result.length > 0) {
+                                res.json(result);
+                            } else {
+                                error.notFound(res);
+                            }
+                        });
+                    });
+                } else {
+                    error.InsufficientRights(res);
+                }
+            });
+        });
+    } else {
+        error.missingProp(res);
+    }
 });
 
-router.put('/studentenhuis/:huisId/maaltijd/:maaltijdId', (req, res) => {
-    res.send('PUT studentenhuis/huisId/maaltijd/maaltijdId')
+router.put('/studentenhuis/:houseId/maaltijd/:mealId', (req, res) => {
+    res.send('PUT studentenhuis/houseId/maaltijd/mealId')
 });
 
 // DELETE Requests
-router.delete('/studentenhuis/:huisId', (req, res) => {
-    res.send('DELETE studentenhuis/huidId')
+router.delete('/studentenhuis/:houseId', (req, res) => {
+    let houseId = req.params.huisId || '';
+    let name = req.body.naam || '';
+    let address = req.body.adres || '';
+
+    let token = req.get('Authorization');
+    token = token.substring(7);
+    let email = auth.decodeToken(token);
+    email = email.sub;
+
+    if (houseId && name !== '' && address !== '') {
+        db.query("SELECT ID FROM user WHERE Email = ?", [email], (err, rows) => {
+            let currentUserId = rows[0].ID;
+
+            db.query("SELECT * FROM studentenhuis WHERE ID = ?", [houseId], (err, result) => {
+                if (result.length > 0) {
+                    console.log("exists");
+                } else {
+                    error.notFound(res);
+                }
+            });
+            db.query("SELECT UserID FROM studentenhuis WHERE ID = ?", [houseId], (err, rows) => {
+                let existingUserId = rows[0].UserID;
+                if (currentUserId == existingUserId) {
+                    db.query("DELETE FROM studentenhuis WHERE ID = ?", [houseId], (err, result) => {
+                        res.status(200).json({
+                            "msg": "Huis succesvol verwijderd",
+                            "status": "200",
+                            "datetime": new Date().format("d-M-Y H:m:s")
+                        });
+                    });
+                } else {
+                    error.InsufficientRights(res);
+                }
+            });
+        });
+    } else {
+        error.missingProp(res);
+    }
 });
 
-router.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId', (req, res) => {
-    res.send('DELETE studentenhuis/huidId/maaltijd/maaltijdId')
+router.delete('/studentenhuis/:houseId/maaltijd/:mealId', (req, res) => {
+    res.send('DELETE studentenhuis/houseId/maaltijd/mealId')
 });
 
-router.delete('/studentenhuis/:huisId/maaltijd/:maaltijdId/deelnemers', (req, res) => {
-    res.send('DELETE studentenhuis/huidId/maaltijd/maaltijdId/deelnemers')
+router.delete('/studentenhuis/:houseId/maaltijd/:mealId/deelnemers', (req, res) => {
+    res.send('DELETE studentenhuis/houseId/maaltijd/mealId/deelnemers')
 });
 
 // ALL Requests

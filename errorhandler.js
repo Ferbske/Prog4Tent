@@ -40,10 +40,30 @@ function emailInvalid(res) {
 
 }
 
+function noResult(res) {
+    res.status(404).json({
+        "msg": "geen resultaten gevonden",
+        "code": 404,
+        "datetime": new Date().format("d-M-Y H:m:s")
+    })
+
+}
+
+function InsufficientRights(res) {
+    res.status(409).json({
+        "msg": "Conflict (deze actie mag U niet uitvoeren)",
+        "code": 409,
+        "datetime": new Date().format("d-M-Y H:m:s")
+    })
+
+}
+
 module.exports = {
     missingProp,
     notFound,
     notAuthorized,
     emailTaken,
-    emailInvalid
+    emailInvalid,
+    noResult,
+    InsufficientRights
 };
