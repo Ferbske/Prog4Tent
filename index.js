@@ -1,17 +1,35 @@
 const express = require('express');
+const expressJWT = require('express-jwt');
+const config = require('./config');
+const api = require('./routes/apiv1');
+const bodyParser = require('body-parser');
+const format = require('node.date-time');
+
 const app = express();
 
-app.all('*', (req, res, next) => {
-    console.log( req.method + " " + req.url);
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+
+app.use(expressJWT({
+    secret: config.secretkey
+}).unless({
+    path: ['/api/login', '/api/register']
+}));
+
+app.use((err, req, res, next) => {
+    if(err.name === 'UnauthorizedError') {
+        res.status(401).json({
+            "msg": "Niet geautoriseerd (geen valid token)",
+            "code": 401,
+            "datetime": new Date().format("d-M-Y H:m:s")
+        });
+        return;
+    }
     next();
 });
 
-app.use('/apiv1', require('./routes/apiv1'));
+app.use('/api', api);
 
-const port = process.env.PORT || 666;
-
-app.listen(port, () => {
-    console.log('The magic happens at http://localhost:' + port);
-});
+app.listen(config.port);
 
 module.exports = app;
