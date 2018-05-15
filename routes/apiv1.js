@@ -140,8 +140,37 @@ router.post('/studentenhuis/:huisId', (req, res) => {
     res.send('POST studentenhuis/huisId')
 });
 
-router.post('/studentenhuis/:huisId/maaltijd/:maaltijdId', (req, res) => {
-    res.send('POST studentenhuis/huisId/maaltijd/maaltijdId')
+router.post('/studentenhuis/:huisId/maaltijd', (req, res) => {
+    // Maak een nieuwe maaltijd voor een studentenhuis. De ID van de gebruiker die de maaltijd aanmaakt wordt opgeslagen bij de maaltijd.
+    // Deze ID haal je uit het JWT token. Als er geen studentenhuis met de gevraagde huisId bestaat wordt een juiste foutmelding geretourneerd.
+    // De correctheid van de informatie die wordt gegeven moet door de server gevalideerd worden.
+    // Bij ontbrekende of foutieve invoer wordt een juiste foutmelding geretourneerd. Authenticatie door middel van JWT is vereist.
+
+    // res.send('POST studentenhuis/huisId/maaltijd');
+    let name = req.body.naam;
+    let description = req.body.beschrijving;
+    let ingredients = req.body.ingredienten;
+    let allergies = req.body.allergie;
+    let price = req.body.prijs;
+    let userID = req.body.userid;
+    let houseID = req.params.huisId;
+    let token = req.get('Authorization');
+    token = token.substring(7);
+    let email = auth.decodeToken(token);
+    email = email.sub;
+
+    if (name !== '' && description !== '' && ingredients !== '' && allergies !== '' && price !== '' && userID !== '' && houseID !== ''){
+        db.query("SELECT ID FROM user WHERE email = ?", [email], (err, rows, fields) => {
+            let userId = rows[0].ID;
+            db.query("INSERT INTO `maaltijd` (Naam, Beschrijving, Ingredienten, Allergie, Prijs, UserID, StudentenhuisID) VALUES (?,?,?,?,?,?,?)", [name, description, ingredients,allergies, price,userID,houseID], (err, rows, field) => {
+                if(err) throw err;
+                let row = rows.insertId;
+                selectId(row, res);
+            });
+        })
+    } else {
+        error.missingProp(res);
+    }
 });
 
 // PUT Requests
