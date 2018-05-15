@@ -9,8 +9,8 @@ function missingProp(res) {
 
 function notFound(res) {
     res.status(404).json({
-        "msg": "Niet gevonden (huisId bestaat niet)",
-        "code": 412,
+        "msg": "Niet gevonden",
+        "code": 404,
         "datetime": new Date().format("d-M-Y H:m:s")
     })
 }
