@@ -159,20 +159,25 @@ router.post('/studentenhuis/:huisId/maaltijd', (req, res) => {
     let ingredients = req.body.ingredienten;
     let allergies = req.body.allergie;
     let price = req.body.prijs;
-    let userID = req.body.userid;
     let houseID = req.params.huisId;
     let token = req.get('Authorization');
     token = token.substring(7);
     let email = auth.decodeToken(token);
     email = email.sub;
 
-    if (name !== '' && description !== '' && ingredients !== '' && allergies !== '' && price !== '' && userID !== '' && houseID !== ''){
+    if (name !== '' && description !== '' && ingredients !== '' && allergies !== '' && price !== '' && houseID !== ''){
         db.query("SELECT ID FROM user WHERE email = ?", [email], (err, rows, fields) => {
             let userId = rows[0].ID;
-            db.query("INSERT INTO `maaltijd` (Naam, Beschrijving, Ingredienten, Allergie, Prijs, UserID, StudentenhuisID) VALUES (?,?,?,?,?,?,?)", [name, description, ingredients,allergies, price,userID,houseID], (err, rows, field) => {
+            db.query("INSERT INTO `maaltijd` (Naam, Beschrijving, Ingredienten, Allergie, Prijs, UserID, StudentenhuisID) VALUES (?,?,?,?,?,?,?)", [name, description, ingredients,allergies, price,userId,houseID], (err, rows, field) => {
                 if(err) throw err;
                 let row = rows.insertId;
-                selectId(row, res);
+                db.query("SELECT * FROM studentenhuis WHERE ID = ?", [row], (err, result) => {
+                    if (result.length > 0) {
+                        res.json(result);
+                    } else {
+                        error.notFound(res)
+                    }
+                })
             });
         })
     } else {
