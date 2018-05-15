@@ -13,7 +13,7 @@ chai.use(chaiHttp);
 // for usage in other testcases that require login.
 let validToken;
 
-describe('Registration', () => {
+describe('Registration', function () {
     this.timeout(10000);
 
     it('should return a token when providing valid information', (done) => {
@@ -132,15 +132,15 @@ describe('Registration', () => {
     })
 });
 
-describe('Login', () => {
+describe('Login', function () {
     this.timeout(10000);
 
     it('should return a token when providing valid information', (done) => {
         chai.request(app)
             .post('/api/login')
             .send({
-                "email": "rvoesene@avans.nl",
-                "password": "test123"
+                "email": "jsmit@server.nl",
+                "password": "secret"
             })
             .end((err, res) => {
                 res.should.have.status(200);
@@ -171,7 +171,7 @@ describe('Login', () => {
         chai.request(app)
             .post('/api/login')
             .send({
-                "email": "rvoesene@avans.nl",
+                "email": "jsmit@server.nl",
                 "password": "test"
             })
             .end((err, res) => {

@@ -9,7 +9,7 @@ let amount;
 chai.should();
 chai.use(chaiHttp);
 
-describe('Studentenhuis API POST', () => {
+describe('Studentenhuis API POST', function () {
     before(() => {
         validToken = require('./authentication.routes.test').token
     });
@@ -74,7 +74,7 @@ describe('Studentenhuis API POST', () => {
     })
 });
 
-describe('Studentenhuis API GET all', () => {
+describe('Studentenhuis API GET all', function () {
     before(() => {
         validToken = require('./authentication.routes.test').token
     });
@@ -103,7 +103,7 @@ describe('Studentenhuis API GET all', () => {
     })
 });
 
-describe('Studentenhuis API GET one', () => {
+describe('Studentenhuis API GET one', function () {
     before(() => {
         validToken = require('./authentication.routes.test').token
     });
@@ -143,7 +143,7 @@ describe('Studentenhuis API GET one', () => {
     })
 });
 
-describe('Studentenhuis API PUT', () => {
+describe('Studentenhuis API PUT', function () {
     before(() => {
         validToken = require('./authentication.routes.test').token
     });
@@ -207,7 +207,7 @@ describe('Studentenhuis API PUT', () => {
     })
 });
 
-describe('Studentenhuis API DELETE', () => {
+describe('Studentenhuis API DELETE', function () {
     before(() => {
         validToken = require('./authentication.routes.test').token;
 
@@ -219,7 +219,7 @@ describe('Studentenhuis API DELETE', () => {
                 "address": "Testweg"
             })
             .end((err, res) => {
-                
+
             });
         
         chai.request(app)
@@ -227,6 +227,7 @@ describe('Studentenhuis API DELETE', () => {
             .set('Authorization', validToken)
             .end((err, res) => {
                 amount = res.body.length
+
             })
             
     });
