@@ -7,35 +7,29 @@ const app = require('../index');
 const db = require('../database/DBConnector');
 
 chai.should();
-chai.should();
 chai.use(chaiHttp);
 
 // After successful registration we have a valid token. We export this token
 // for usage in other testcases that require login.
 let validToken;
 
-describe('Registration', function () {
+describe('Registration', () => {
     this.timeout(10000);
 
-    db.query("DELETE FROM user WHERE Email = ?", ['rvoesene@avans.nl']);
-
-    it('should return a token when providing valid information', function (done) {
+    it('should return a token when providing valid information', (done) => {
         chai.request(app)
             .post('/api/register')
             .send({
-                "voornaam": "Rick",
-                "achternaam": "Voesenek",
-                "email": "rvoesene@avans.nl",
+                "firstname": "Kim",
+                "lastname": "van Gageldonk",
+                "email": "kvgageldonk@hotmail.com",
                 "password": "test123"
             })
             .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.a('object');
 
-                validToken = res.body.token;
-                module.exports = {
-                    token: validToken
-                };
+                db.query("DELETE FROM user WHERE Email = ?", ['kvgageldonk@hotmail.com']);
                 done()
             })
     });
@@ -53,10 +47,10 @@ describe('Registration', function () {
         chai.request(app)
             .post('/api/register')
             .send({
-                "voornaam": "Rick",
-                "achternaam": "Voesenek",
-                "email": "rvoesene@avans.nl",
-                "password": "test123"
+                "firstname": "Jan",
+                "lastname": "Smit",
+                "email": "jsmit@server.nl",
+                "password": "secret"
             })
             .end((err, res) => {
                 res.should.have.status(409);
@@ -68,8 +62,8 @@ describe('Registration', function () {
         chai.request(app)
             .post('/api/register')
             .send({
-                "achternaam": "Voesenek",
-                "email": "rvoesene@avans.nl",
+                "lastname": "van Gageldonk",
+                "email": "kvgageldonk@hotmail.com",
                 "password": "test123"
             })
             .end((err, res) => {
@@ -82,9 +76,9 @@ describe('Registration', function () {
         chai.request(app)
             .post('/api/register')
             .send({
-                "voornaam": "R",
-                "achternaam": "Voesenek",
-                "email": "rvoesene@avans.nl",
+                "firstname": "K",
+                "lastname": "van Gageldonk",
+                "email": "kvgageldonk@hotmail.com",
                 "password": "test123"
             })
             .end((err, res) => {
@@ -97,8 +91,8 @@ describe('Registration', function () {
         chai.request(app)
             .post('/api/register')
             .send({
-                "voornaam": "Rick",
-                "email": "rvoesene@avans.nl",
+                "firstname": "Kim",
+                "email": "kvgageldonk@hotmail.com",
                 "password": "test123"
             })
             .end((err, res) => {
@@ -111,9 +105,9 @@ describe('Registration', function () {
         chai.request(app)
             .post('/api/register')
             .send({
-                "voornaam": "Rick",
-                "achternaam": "V",
-                "email": "rvoesene@avans.nl",
+                "firstname": "Kim",
+                "lastname": "G",
+                "email": "kvgageldonk@hotmail.com",
                 "password": "test123"
             })
             .end((err, res) => {
@@ -126,8 +120,8 @@ describe('Registration', function () {
         chai.request(app)
             .post('/api/register')
             .send({
-                "voornaam": "Rick",
-                "achternaam": "Voesenek",
+                "firstname": "Kim",
+                "lastname": "van Gageldonk",
                 "email": "test",
                 "password": "test123"
             })
@@ -138,7 +132,7 @@ describe('Registration', function () {
     })
 });
 
-describe('Login', function () {
+describe('Login', () => {
     this.timeout(10000);
 
     it('should return a token when providing valid information', (done) => {
@@ -151,6 +145,11 @@ describe('Login', function () {
             .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.a('object');
+
+                let validToken = res.body.token;
+                module.exports = {
+                    token: validToken
+                };
                 done()
             })
     });
@@ -192,5 +191,5 @@ describe('Login', function () {
                 res.should.have.status(409);
                 done()
             })
-    })
+    });
 });
