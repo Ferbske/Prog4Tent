@@ -15,7 +15,6 @@ function notFound(res) {
     })
 }
 
-
 function notAuthorized(res){
     res.status(401).json({
         "msg": "U bent niet geauthoriseerd om deze actie uit te voeren",
@@ -58,9 +57,19 @@ function InsufficientRights(res) {
 
 }
 
+function AlreadySigned(res) {
+    res.status(409).json({
+        "msg": "Conflict (U bent al ingeschreven)",
+        "code": 409,
+        "datetime": new Date().format("d-M-Y H:m:s")
+    })
+
+}
+
 module.exports = {
     missingProp,
     notFound,
+    AlreadySigned,
     notAuthorized,
     emailTaken,
     emailInvalid,
