@@ -16,23 +16,17 @@ const user = require('../database/user');
 // GET requests
 router.get('/studentenhuis/:huisId?', (req, res) => {
     let huisId = req.params.huisId || '';
-    let result;
     if (huisId === '') {
         db.query("SELECT * FROM studentenhuis", (err, result) => {
             if (err) throw err;
-            console.log(result);
             res.json(result);
         });
     } else {
-        db.query("SELECT * FROM studentenhuis WHERE ID = " + huisId, (err, result) => {
-            if (err) throw err;
-            console.log(result);
-            if (result === null) {
-                res.status(404);
-                res.send('Niet gevonden (huisId bestaat niet)');
-            } else {
-                res.status(200);
+        db.query("SELECT * FROM studentenhuis WHERE ID = ?", [huisId], (err, result) => {
+            if (result.length > 0) {
                 res.json(result);
+            } else {
+                error.notFound(res);
             }
         });
     }
@@ -119,15 +113,27 @@ router.post('/register', (req, res) => {
     }
 });
 
+//
 router.post('/studentenhuis', (req, res) => {
-    let naam = req.body.naam || '';
-    let adres = req.body.adres || '';
-    // db.query("INSERT INTO studentenhuis (Naam = '" + naam + "', '" + adres, (err, result) => {
-    //     if (err) throw err;
-    //     console.log(result);
-    //     res.send(result);
-    // });
-    res.send(naam + " "+ adres);
+    let name = req.body.name || '';
+    let address = req.body.address || '';
+    let token = req.get('Authorization');
+    token = token.substring(7);
+    let email = auth.decodeToken(token);
+    email = email.sub;
+
+    if (name !== '' && address !== ''){
+        db.query("SELECT ID GROM user WHERE email = ?", [email], (err, rows, fields) => {
+            let userId = rows[0].ID;
+            db.query("INSERT INTO `studentenhuis` (Naam, Adres, UserID) VALUES (?,?,?)", [naam, address, userId], (err, rows, field) => {
+                if(err) throw err;
+                let row = rows.insertId;
+                selectId(row, res);
+            });
+        })
+    } else {
+        error.missingProp(res);
+    }
 });
 
 router.post('/studentenhuis/:huisId', (req, res) => {
