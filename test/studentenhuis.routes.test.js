@@ -40,7 +40,7 @@ describe('Studentenhuis API POST', function () {
                 res.should.have.status(200);
                 res.body.should.be.a('array');
 
-                db.query("DELETE FROM studentenhuis WHERE naam = ?", ['Huize Pils Genoeg']);
+                db.query("DELETE FROM studentenhuis WHERE naam = ?", ['Studjeshuis']);
                 done()
             })
     });
@@ -207,8 +207,8 @@ describe('Studentenhuis API DELETE', function () {
             .post('/api/studentenhuis')
             .set('Authorization', validToken)
             .send({
-                "name": "TestHuis",
-                "address": "Testweg"
+                "naam": "TestHuis",
+                "adres": "Testweg"
             })
             .end((err, res) => {
 
