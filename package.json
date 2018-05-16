@@ -4,7 +4,8 @@
   "description": "Prog4Tent",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon --exec \"mocha -R min\""
+    "test": "nodemon --exec \"mocha -R min\"",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
