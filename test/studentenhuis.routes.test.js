@@ -6,6 +6,7 @@ const config = require('../config');
 
 let validToken = config.token;
 let amount;
+let iddel;
 
 chai.should();
 chai.use(chaiHttp);
@@ -203,25 +204,20 @@ describe('Studentenhuis API PUT', function () {
 
 describe('Studentenhuis API DELETE', function () {
     before(function () {
+        validToken = config.token;
         chai.request(app)
             .post('/api/studentenhuis')
             .set('Authorization', validToken)
             .send({
-                "naam": "TestHuis",
-                "adres": "Testweg"
+                "name": "TestHuis",
+                "address": "Testweg"
             })
             .end((err, res) => {
 
             });
-
-        chai.request(app)
-            .get('/api/studentenhuis')
-            .set('Authorization', validToken)
-            .end((err, res) => {
-                amount = res.body.length
-
-            })
-
+        db.query("SELECT MAX(ID) AS ID FROM studentenhuis", (err, rows) => {
+            amount = rows[0].ID
+        });
     });
 
     this.timeout(10000);
