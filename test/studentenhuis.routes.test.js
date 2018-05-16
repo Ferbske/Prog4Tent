@@ -18,8 +18,8 @@ describe('Studentenhuis API POST', function () {
             .post('/api/studentenhuis')
             .set('Authorization', 'test')
             .send({
-                "name": "Studjeshuis",
-                "address": "Studjesweg 12"
+                "naam": "Studjeshuis",
+                "adres": "Studjesweg 12"
             })
             .end((err, res) => {
                 res.should.have.status(401);
@@ -33,8 +33,8 @@ describe('Studentenhuis API POST', function () {
             .post('/api/studentenhuis')
             .set('Authorization', validToken)
             .send({
-                "name": "Studjeshuis",
-                "address": "Studjesweg 12"
+                "naam": "Studjeshuis",
+                "adres": "Studjesweg 12"
             })
             .end((err, res) => {
                 res.should.have.status(200);
@@ -51,7 +51,7 @@ describe('Studentenhuis API POST', function () {
             .post('/api/studentenhuis')
             .set('Authorization', validToken)
             .send({
-                "address": "Studjesweg 12"
+                "adres": "Studjesweg 12"
             })
             .end((err, res) => {
                 res.should.have.status(412);
@@ -65,7 +65,7 @@ describe('Studentenhuis API POST', function () {
             .post('/api/studentenhuis')
             .set('Authorization', validToken)
             .send({
-                "name": "Studjeshuis"
+                "naam": "Studjeshuis"
             })
             .end((err, res) => {
                 res.should.have.status(412);
