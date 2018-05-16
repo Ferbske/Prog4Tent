@@ -2,18 +2,15 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../index');
 const db = require('../database/DBConnector');
+const config = require('../config');
 
-let validToken;
+let validToken = config.token;
 let amount;
 
 chai.should();
 chai.use(chaiHttp);
 
 describe('Studentenhuis API POST', function () {
-    before(() => {
-        validToken = require('./authentication.routes.test').token
-    });
-
     this.timeout(10000);
 
     it('should throw an error when using invalid JWT token', (done) => {
@@ -31,6 +28,7 @@ describe('Studentenhuis API POST', function () {
     });
 
     it('should return a studentenhuis when posting a valid object', (done) => {
+        validToken = config.token;
         chai.request(app)
             .post('/api/studentenhuis')
             .set('Authorization', validToken)
@@ -48,6 +46,7 @@ describe('Studentenhuis API POST', function () {
     });
 
     it('should throw an error when naam is missing', (done) => {
+        validToken = config.token;
         chai.request(app)
             .post('/api/studentenhuis')
             .set('Authorization', validToken)
@@ -61,6 +60,7 @@ describe('Studentenhuis API POST', function () {
     });
 
     it('should throw an error when adres is missing', (done) => {
+        validToken = config.token;
         chai.request(app)
             .post('/api/studentenhuis')
             .set('Authorization', validToken)
@@ -75,10 +75,6 @@ describe('Studentenhuis API POST', function () {
 });
 
 describe('Studentenhuis API GET all', function () {
-    before(() => {
-        validToken = require('./authentication.routes.test').token
-    });
-
     this.timeout(10000);
 
     it('should throw an error when using invalid JWT token', (done) => {
@@ -92,6 +88,7 @@ describe('Studentenhuis API GET all', function () {
     });
 
     it('should return all studentenhuizen when using a valid token', (done) => {
+        validToken = config.token;
         chai.request(app)
             .get('/api/studentenhuis')
             .set('Authorization', validToken)
@@ -104,10 +101,6 @@ describe('Studentenhuis API GET all', function () {
 });
 
 describe('Studentenhuis API GET one', function () {
-    before(() => {
-        validToken = require('./authentication.routes.test').token
-    });
-
     this.timeout(10000);
 
     it('should throw an error when using invalid JWT token', (done) => {
@@ -121,6 +114,7 @@ describe('Studentenhuis API GET one', function () {
     });
 
     it('should return the correct studentenhuis when using an existing huisId', (done) => {
+        validToken = config.token;
         chai.request(app)
             .get('/api/studentenhuis/1')
             .set('Authorization', validToken)
@@ -133,6 +127,7 @@ describe('Studentenhuis API GET one', function () {
     });
 
     it('should return an error when using an non-existing huisId', (done) => {
+        validToken = config.token;
         chai.request(app)
             .get('/api/studentenhuis/1337')
             .set('Authorization', validToken)
@@ -144,10 +139,6 @@ describe('Studentenhuis API GET one', function () {
 });
 
 describe('Studentenhuis API PUT', function () {
-    before(() => {
-        validToken = require('./authentication.routes.test').token
-    });
-
     this.timeout(10000);
 
     it('should throw an error when using invalid JWT token', (done) => {
@@ -165,6 +156,7 @@ describe('Studentenhuis API PUT', function () {
     });
 
     it('should return a studentenhuis with ID when posting a valid object', (done) => {
+        validToken = config.token;
         chai.request(app)
             .put('/api/studentenhuis/1')
             .set('Authorization', validToken)
@@ -181,6 +173,7 @@ describe('Studentenhuis API PUT', function () {
     });
 
     it('should throw an error when naam is missing', (done) => {
+        validToken = config.token;
         chai.request(app)
             .put('/api/studentenhuis/1')
             .set('Authorization', validToken)
@@ -194,6 +187,7 @@ describe('Studentenhuis API PUT', function () {
     });
 
     it('should throw an error when adres is missing', (done) => {
+        validToken = config.token;
         chai.request(app)
         .put('/api/studentenhuis/1')
         .set('Authorization', validToken)
@@ -208,9 +202,7 @@ describe('Studentenhuis API PUT', function () {
 });
 
 describe('Studentenhuis API DELETE', function () {
-    before(() => {
-        validToken = require('./authentication.routes.test').token;
-
+    before(function () {
         chai.request(app)
             .post('/api/studentenhuis')
             .set('Authorization', validToken)
@@ -221,7 +213,7 @@ describe('Studentenhuis API DELETE', function () {
             .end((err, res) => {
 
             });
-        
+
         chai.request(app)
             .get('/api/studentenhuis')
             .set('Authorization', validToken)
@@ -229,7 +221,7 @@ describe('Studentenhuis API DELETE', function () {
                 amount = res.body.length
 
             })
-            
+
     });
 
     this.timeout(10000);
@@ -253,18 +245,4 @@ describe('Studentenhuis API DELETE', function () {
                 done()
             })
     });
-
-    it('should throw an error when naam is missing', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    });
-
-    it('should throw an error when adres is missing', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    })
 });

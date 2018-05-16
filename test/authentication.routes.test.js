@@ -145,11 +145,6 @@ describe('Login', function () {
             .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.a('object');
-
-                let validToken = res.body.token;
-                module.exports = {
-                    token: validToken
-                };
                 done()
             })
     });

@@ -170,9 +170,9 @@ router.post('/studentenhuis', (req, res) => {
             let userId = rows[0].ID;
             db.query("INSERT INTO `studentenhuis` (Naam, Adres, UserID) VALUES (?,?,?)", [name, address, userId], (err, rows, field) => {
                 if (err) throw err;
-                let row = rows.insertId;
-                db.query("SELECT * FROM studentenhuis WHERE ID = ?", [row], (err, result) => {
+                db.query("SELECT * FROM studentenhuis WHERE ID = ?", [userId], (err, result) => {
                     if (result.length > 0) {
+                        console.log(res);
                         res.json(result);
                     } else {
                         error.notFound(res)
