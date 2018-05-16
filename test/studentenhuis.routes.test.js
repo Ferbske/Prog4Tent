@@ -146,8 +146,8 @@ describe('Studentenhuis API PUT', function () {
             .put('/api/studentenhuis/1')
             .set('Authorization', 'test')
             .send({
-                "name": "Lovensdijk",
-                "address": "Lovensdijkstraat, Breda"
+                "naam": "Lovensdijk",
+                "adres": "Lovensdijkstraat, Breda"
             })
             .end((err, res) => {
                 res.should.have.status(401);
@@ -161,8 +161,8 @@ describe('Studentenhuis API PUT', function () {
             .put('/api/studentenhuis/1')
             .set('Authorization', validToken)
             .send({
-                "name": "Lovensdijk",
-                "address": "Lovensdijkstraat, Breda"
+                "naam": "Lovensdijk",
+                "adres": "Lovensdijkstraat, Breda"
             })
             .end((err, res) => {
                 res.should.have.status(200);
@@ -178,7 +178,7 @@ describe('Studentenhuis API PUT', function () {
             .put('/api/studentenhuis/1')
             .set('Authorization', validToken)
             .send({
-                "address": "Lovensdijkstraat, Breda"
+                "adres": "Lovensdijkstraat, Breda"
             })
             .end((err, res) => {
                 res.should.have.status(412);
@@ -192,7 +192,7 @@ describe('Studentenhuis API PUT', function () {
         .put('/api/studentenhuis/1')
         .set('Authorization', validToken)
         .send({
-            "name": "Lovensdijk",
+            "naam": "Lovensdijk",
         })
         .end((err, res) => {
             res.should.have.status(412);
